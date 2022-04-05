@@ -22,7 +22,7 @@ class Viaje
      * @param string $destino
      */
 
-    function __construct($codigo, $destino, $cantMax, $pasajerosViaje)
+    public function __construct($codigo, $destino, $cantMax, $pasajerosViaje)
     {   
         $this->codigo = $codigo;
         $this->destino = $destino;

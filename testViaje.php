@@ -106,34 +106,16 @@ function modificarPasajero($objetoViaje)
 {
     echo "Introduzca el documento del pasajero a modificar: "."\n";
     $doc = trim(fgets(STDIN));
-    echo "Desea modificar el nombre? Si/No"."\n";
-    $siNo = strtolower(trim(fgets(STDIN)));
-    if ($siNo == "si"){
-        echo "Escriba el nombre: ";
-        $clave = "Nombre";
-        $dato = trim(fgets(STDIN));
-    }else{
-        echo "Desea modificar el apellido? Si/No"."\n";
-        $siNo = strtolower(trim(fgets(STDIN)));
-        if ($siNo == "si"){
-            echo "Escriba el apellido: ";
-            $clave = "Apellido";
-            $dato = trim(fgets(STDIN));
-        }else{
-            echo "Desea modificar el nro de docmuento?"."\n";
-            $siNo = strtolower(trim(fgets(STDIN)));
-            if ($siNo == "si"){
-                echo "Escriba el documento:";
-                $clave = "Nro documento";
-                $dato = trim(fgets(STDIN));
-            }else{
-                echo "Usted no ha modificado ningún dato";
-                $clave = "";
-                $dato = "";
-            }
-        }
+    echo "Ingrese el dato a modificar (Nombre/Apellido/Documento): ";
+    $modificacion = strtolower(trim(fgets(STDIN)));
+    while ((($modificacion != "nombre")&&($modificacion != "apellido")&&($modificacion != "documento"))){
+        echo "El dato ingresado no es correcto. Ingrese una opcion: Nombre, Apellido, Documento";
+        $modificacion = trim(fgets(STDIN));
     }
-    $objetoViaje->cambiarDatoPasajero($doc, $clave, $dato);
+    echo "Ingrese el dato: ";
+    $dato = trim(fgets(STDIN));
+    $objetoViaje->cambiarDatoPasajero($doc, $modificacion, $dato);
+    echo "El pasajero ha sido modificado";
 }
 
 function modificarInfoViaje($objetoViaje)
