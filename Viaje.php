@@ -121,7 +121,7 @@ class Viaje
     }
 
     /**
-     * Este modulo asigna los valores a los atributos cuando se crea una instancia de la clase 
+     * Este modulo modifica los datos de un pasajero
      * @param int $documento
      * @param string $clave
      * @param string $dato
@@ -138,8 +138,12 @@ class Viaje
             $i++;
             }
         }while($encontro && $i < $limite);
-        $arrayPasajero[$i][$clave] = $dato;
-        $this->setPasajerosViaje($arrayPasajero);
+        if($encontro){
+            echo "No se encontró el documento seleccionado";
+        }else{
+            $arrayPasajero[$i][$clave] = $dato;
+            $this->setPasajerosViaje($arrayPasajero);
+        }
     }
 
 
