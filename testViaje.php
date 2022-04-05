@@ -37,13 +37,13 @@ function pasajeros($cantidad){
     "Nro documento" => ""];
     do
     {
-        echo  "Nombre N° ".($i+1).": "."\n";
+        echo  "Nombre del pasajero n° ".($i+1).": "."\n";
         $nombre = trim(fgets(STDIN));
         $pasajeros[$i]["Nombre"] = $nombre;
-        echo "Apellido N° ".($i+1).": "."\n";
+        echo "Apellido del pasajero n° ".($i+1).": "."\n";
         $apellido = trim(fgets(STDIN));
         $pasajeros[$i]["Apellido"] = $apellido;
-        echo "Documento N° ".($i+1).": "."\n";
+        echo "Documento del pasajero n° ".($i+1).": "."\n";
         $nroDoc = trim(fgets(STDIN));
         $pasajeros[$i]["Nro documento"] = $nroDoc;
         $i = $i+1;
@@ -68,10 +68,10 @@ function nuevoPasajero ()
 }
 
 
-function agregarPasajero($cantMax, $arrayPasajeros)
+function agregarPasajero($objetoViaje)
 {
-    $cantidad = count($arrayPasajeros);
-    if ($cantMax>$cantidad){
+    $cantidad = count($objetoViaje->getPasajerosViaje());
+    if ($objetoViaje->getCantMax()>$cantidad){
         $pasajeroNuevo[$cantidad] = nuevoPasajero();
         array_push ($arrayPasajeros, $pasajeroNuevo[$cantidad]);
     }else{
@@ -141,44 +141,61 @@ function modificarInfoViaje($objetoViaje)
     }
     echo $objetoViaje;
 }
-
+function separador()
+{
+    echo "****************************************************************************"."\n";
+}
 /**********************************************************************************/
 /******************************* PROGRAMA PRINCIPAL *******************************/
 /**********************************************************************************/
 
+separador();
 echo "Bienvenidos a la base de datos de viajes"."\n";
-echo "\n"."Ingrese el codigo de viaje: ";
+separador();
+echo "Ingrese el codigo de viaje: "."\n";
 $cod = trim(fgets(STDIN));
 echo "Ingrese el destino: "."\n";
 $dest = trim(fgets(STDIN));
-echo "Ingrese la cantidad de pasajeros:"."\n";
-$limite = trim(fgets(STDIN));
-$arrayPasajeros = pasajeros($limite);
-$objViaje = new Viaje ($cod, $dest, $limite, $arrayPasajeros);
+echo "Ingrese la capacidad máxima pasajeros:"."\n";
+$capMax = trim(fgets(STDIN));
+echo "Ingrese la cantidad de personas que viajan:"."\n";
+$viajante = trim(fgets(STDIN));
+if($viajante <= $capMax){
+    $arrayPasajeros = pasajeros($viajante);
+    $objViaje = new Viaje ($cod, $dest, $capMax, $arrayPasajeros);
+}else{
+    echo "La capacidad es limitada, debe ingresar hasta un maximo de ".$capMax." pasajeros";
+}
 $menu = seleccionarOpcion();
+separador();
 do{
 switch ($menu){
     case 1:
+        separador();
         agregarPasajero($objViaje->getCantMax(), $objViaje->getPasajerosViaje());
         $menu = seleccionarOpcion();
         break;
 
     case 2:
+        separador();
         eliminarPasajero($objViaje);
         $menu = seleccionarOpcion();
         break;
 
     case 3:
+        separador();
         modificarPasajero($objViaje);
         $menu = seleccionarOpcion();
         break;
         
     case 4:
+        separador();
         modificarInfoViaje($objViaje);
         $menu = seleccionarOpcion();
         break;
 
     case 5:
+        separador();
         echo $objViaje;
         echo "Lista de pasajeros: ";
         print_r ($arrayPasajeros);

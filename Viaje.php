@@ -154,7 +154,8 @@ class Viaje
     {
         return "Código de viaje: ".$this->getCodigo()."\n".
                "Destino: ".$this->getDestino()."\n".
-               "Cantidad de pasajeros: ".$this->getCantMax()."\n";
+               "Cantidad de pasajeros: ".$this->getCantMax()."\n".
+               "Los pasajeros del viaje son: ".count($this->getPasajeros())."\n";
     }
 }
 ?>
