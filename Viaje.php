@@ -6,29 +6,12 @@ class Viaje
      * int $codigo
      * string $destino
      * int $cantMax
-     * array $pasajerosViaje
+     * array $arrayObjPasajeros
      */
     private $codigo;
     private $destino;
     private $cantMax;
-    private $pasajerosViaje;
-    
-    /**
-     * Módulo constructor de la clase viaje, tiene por parametro los 
-     * valores que se le asignan a las variables de la clase
-     * @param int $codigo
-     * @param int $cantMax
-     * @param array $pasajerosViaje
-     * @param string $destino
-     */
-
-    public function __construct($codigo, $destino, $cantMax, $pasajerosViaje)
-    {   
-        $this->codigo = $codigo;
-        $this->destino = $destino;
-        $this->cantMax = $cantMax;
-        $this->pasajerosViaje = $pasajerosViaje;
-    }
+    private $arrayObjPasajeros;
 
 
     /*****************************************************************/
@@ -39,33 +22,29 @@ class Viaje
     /**
      * Obtiene el valor de codigo
      */ 
-    public function getCodigo()
-    {
+    public function getCodigo(){
         return $this->codigo;
     }
 
     /**
      * Obtiene el valor de destino
      */ 
-    public function getDestino()
-    {
+    public function getDestino(){
         return $this->destino;
     }
 
     /**
      * Obtiene el valor de cantMax
      */ 
-    public function getCantMax()
-    {
+    public function getCantMax(){
         return $this->cantMax;
     }
 
     /**
      * Obtiene el valor de nombre dentro del array pasajerosViaje
      */ 
-    public function getPasajerosViaje()
-    {
-        return $this->pasajerosViaje;
+    public function getArrayObjPasajeros(){
+        return $this->arrayObjPasajeros;
     }
 
 
@@ -79,11 +58,8 @@ class Viaje
      * @param int $codigo
      * @return self
      */ 
-    public function setCodigo($codigo)
-    {
+    public function setCodigo($codigo){
         $this->codigo = $codigo;
-
-        return $this;
     }
 
     /**
@@ -91,11 +67,8 @@ class Viaje
      * @param string $destino
      * @return self
      */ 
-    public function setDestino($destino)
-    {
+    public function setDestino($destino){
         $this->destino = $destino;
-
-        return $this;
     }
 
     /**
@@ -103,11 +76,8 @@ class Viaje
      * @param int $cantMax
      * @return self
      */ 
-    public function setCantMax($cantMax)
-    {
+    public function setCantMax($cantMax){
         $this->cantMax = $cantMax;
-
-        return $this;
     }
 
     /**
@@ -115,9 +85,29 @@ class Viaje
      * @param array $pasajerosViaje
      * @return self
      */ 
-    public function setPasajerosViaje($pasajerosViaje)
-    {
-        return $this->pasajerosViaje = $pasajerosViaje;
+    public function setArrayObjPasajeros($arrayObjPasajeros){
+        $this->arrayObjPasajeros = $arrayObjPasajeros;
+    }
+    
+    
+    /*****************************************************************/
+    /*************************** FUNCIONES ***************************/
+    /*****************************************************************/
+    
+    
+    /**
+     * Módulo constructor de la clase Viaje, tiene por parametro los 
+     * valores que se le asignan a las variables de la clase
+     * @param int $codigo
+     * @param int $cantMax
+     * @param array $pasajerosViaje
+     * @param string $destino
+     */
+    public function __construct($codigo, $destino, $cantMax, $arrayObjPasajeros){   
+        $this->codigo = $codigo;
+        $this->destino = $destino;
+        $this->cantMax = $cantMax;
+        $this->arrayObjPasajeros = $arrayObjPasajeros;
     }
 
     /**
@@ -127,12 +117,12 @@ class Viaje
      * @param string $dato
      */
     public function cambiarDatoPasajero($documento,$clave,$dato){
-        $arrayPasajero = $this->getPasajerosViaje();
+        $arrayPasajero = $this->getArrayObjPasajeros();
         $i = 0;
         $limite = count($arrayPasajero);
         do{
             $encontro = true;
-            if($arrayPasajero[$i]["Nro documento"] == $documento){
+            if($arrayPasajero[$i]->getNroDocumento() == $documento){
                 $encontro = false;
             }else{
             $i++;
@@ -146,16 +136,15 @@ class Viaje
         }
     }
 
-
     /* Modulo que muestra por pantalla una instancia de Viaje 
      * return string
      */
-    public function __toString()
-    {
-        return "Código de viaje: ".$this->getCodigo()."\n".
+    public function __toString(){
+        return "*************************************************"."\n".
+               "Código de viaje: ".$this->getCodigo()."\n".
                "Destino: ".$this->getDestino()."\n".
                "Cantidad de pasajeros: ".$this->getCantMax()."\n".
-               "Los pasajeros del viaje son: ".count($this->getPasajerosViaje())."\n";
+               "*************************************************"."\n";
     }
 }
 ?>

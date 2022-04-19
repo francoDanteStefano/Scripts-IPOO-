@@ -1,14 +1,31 @@
 <?php
 
+/**
+ * La empresa de transporte de pasajeros "Viaje Feliz" quiere registrar la informacion referente a sus viajes. De cada viaje se precisa
+ * almacenar el codigo del mismo, destino, cantidad maxima de pasajeros y los pasajeros del viaje.
+ * Realice la implementacion de la clase viaje e implemente los metodos necesaior para modificar los atributos de dicha clase (incluso 
+ * los datos de los pasajeros). Utilice un array que almacene la informacion correspondiente a los pasajeros. Cada pasajero es un array
+ * asociativo con las claves "nombre", "apellido" y "numero de documento". Implementar un script testViaje.php que cree una instancia
+ * de la clase viaje y presente un menu que permita cargar la informacion del viaje, modificar y ver sus datos.
+ * 
+ * Modificar la clase Viaje para que ahora los pasajeros sean un objeto que tenga los atributos nombre, apellido, numero de documento 
+ * y teléfono. El viaje ahora contiene una referencia a una colección de objetos de la clase Pasajero. 
+ * También se desea guardar la información de la persona responsable de realizar el viaje, para ello cree una clase ResponsableV 
+ * que registre el número de empleado, número de licencia, nombre y apellido. La clase Viaje debe hacer referencia al responsable
+ *  de realizar el viaje. Volver a implementar las operaciones que permiten modificar el nombre, apellido y teléfono de un pasajero. 
+ * Luego implementar la operación que agrega los pasajeros al viaje, solicitando por consola la información de los mismos. 
+ * Se debe verificar que el pasajero no este cargado mas de una vez en el viaje. De la misma forma cargue la información 
+ * del responsable del viaje. */
 include "Viaje.php";
+include "Pasajero.php";
+include "ResponsableV.php";
 
 
 /**
  * Este módulo muestra por pantalla el menú y retorna la opción elegida por el usuario
  * @return int 
  */
-function seleccionarOpcion()
-{
+function seleccionarOpcion(){
     // int $menu
     separador();
     echo "\n"."MENU DE OPCIONES"."\n";
@@ -24,8 +41,7 @@ function seleccionarOpcion()
     return $menu;
 }
 
-function acumViajes ($cant)
-{
+function acumViajes ($cant){
     $objViaje = [];
     for ($i=0; $i < $cant; $i++){
         echo "Ingrese el codigo del viaje n°".($i+1).": "."\n";
@@ -53,8 +69,7 @@ function acumViajes ($cant)
  * @param string $codigoViaje
  * @return boolean
  */
-function existeViaje($arrayViajes, $codigoViaje)
-{
+function existeViaje($arrayViajes, $codigoViaje){
     $dimension = count($arrayViajes);
     $buscarCodigo = true;
     $i=0;
@@ -74,8 +89,7 @@ function existeViaje($arrayViajes, $codigoViaje)
  * @param string $codigoViaje
  * @return int
  */
-function buscarViaje($arrayViajes, $codigoViaje)
-{
+function buscarViaje($arrayViajes, $codigoViaje){
     $dimension = count($arrayViajes);
     $buscarCodigo = true;
     $i = 0;
@@ -118,8 +132,7 @@ function pasajeros($cantidad){
 }
 
 
-function nuevoPasajero ()
-{
+function nuevoPasajero (){
     echo "Introduzca el nombre: ";
     $nombre = trim(fgets(STDIN));
     echo "Introduzca el apellido: ";
@@ -133,8 +146,7 @@ function nuevoPasajero ()
 }
 
 
-function agregarPasajero($limite, $arrayPasajeros)
-{
+function agregarPasajero($limite, $arrayPasajeros){
     $cantidad = count($arrayPasajeros);
     if ($limite>$cantidad){
         $pasajeroNuevo[$cantidad] = nuevoPasajero();
@@ -145,8 +157,7 @@ function agregarPasajero($limite, $arrayPasajeros)
 }
 
 
-function eliminarPasajero($objetoViaje)
-{
+function eliminarPasajero($objetoViaje){
     $arrayPas = $objetoViaje->getPasajerosViaje();
     $i=0;
     $cant = count($arrayPas);
@@ -167,8 +178,7 @@ function eliminarPasajero($objetoViaje)
 }
 
 
-function modificarPasajero($objetoViaje)
-{
+function modificarPasajero($objetoViaje){
     echo "Introduzca el documento del pasajero a modificar: "."\n";
     $doc = trim(fgets(STDIN));
     echo "Ingrese el dato a modificar (Nombre/Apellido/Documento): ";
@@ -183,8 +193,7 @@ function modificarPasajero($objetoViaje)
     echo "El pasajero ha sido modificado";
 }
 
-function modificarInfoViaje($objetoViaje)
-{
+function modificarInfoViaje($objetoViaje){
     echo "Que desea modificar? (Codigo/Destino/Capacidad)"."\n";
     $datoAModificar = strtolower(trim(fgets(STDIN)));
     while (($datoAModificar<>"codigo")&&($datoAModificar<>"destino")&&($datoAModificar<>"capacidad")){
@@ -206,8 +215,8 @@ function modificarInfoViaje($objetoViaje)
     }
     echo $objetoViaje;
 }
-function separador()
-{
+
+function separador(){
     echo "****************************************************************************"."\n";
 }
 /**********************************************************************************/
