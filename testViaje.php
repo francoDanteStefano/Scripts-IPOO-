@@ -8,8 +8,7 @@
  * asociativo con las claves "nombre", "apellido" y "numero de documento". Implementar un script testViaje.php que cree una instancia
  * de la clase viaje y presente un menu que permita cargar la informacion del viaje, modificar y ver sus datos.
  * 
- * Modificar la clase Viaje para que ahora los pasajeros sean un objeto que tenga los atributos nombre, apellido, numero de documento 
- * y teléfono. El viaje ahora contiene una referencia a una colección de objetos de la clase Pasajero. 
+ * El viaje ahora contiene una referencia a una colección de objetos de la clase Pasajero. 
  * También se desea guardar la información de la persona responsable de realizar el viaje, para ello cree una clase ResponsableV 
  * que registre el número de empleado, número de licencia, nombre y apellido. La clase Viaje debe hacer referencia al responsable
  *  de realizar el viaje. Volver a implementar las operaciones que permiten modificar el nombre, apellido y teléfono de un pasajero. 
@@ -42,7 +41,7 @@ function seleccionarOpcion(){
 }
 
 function acumViajes ($cant){
-    $objViaje = [];
+    $objViajes = [];
     for ($i=0; $i < $cant; $i++){
         echo "Ingrese el codigo del viaje n°".($i+1).": "."\n";
         $cod = trim(fgets(STDIN));
@@ -51,15 +50,15 @@ function acumViajes ($cant){
         echo "Ingrese la capacidad máxima pasajeros del viaje n°".($i+1).":"."\n";
         $capMax = trim(fgets(STDIN));
         echo "Ingrese la cantidad de personas del viaje n°".($i+1).":"."\n";
-        $viajante = trim(fgets(STDIN));
-        if($viajante <= $capMax){
-            $arrayPasajeros = pasajeros($viajante);
-            $objViaje[$i] = new Viaje ($cod, $dest, $capMax, $arrayPasajeros);
+        $viajantes = trim(fgets(STDIN));
+        if($viajantes <= $capMax){
+            $arrayPasajeros = pasajeros($viajantes);
+            $objViajes[$i] = new Viaje ($cod, $dest, $capMax, $arrayPasajeros);
         }else{
         echo "La capacidad es limitada, debe ingresar hasta un maximo de ".$capMax." pasajeros";
         }
     }
-    return $objViaje;
+    return $objViajes;
 }
 
 
@@ -111,22 +110,19 @@ function buscarViaje($arrayViajes, $codigoViaje){
  */
 function pasajeros($cantidad){
     $i= 0;
-    $pasajeros[$i] = ["Nombre" => "",
-    "Apellido" => "",
-    "Nro documento" => ""];
+    $pasajeros = [];
     do
     {
         echo  "Nombre del pasajero n° ".($i+1).": "."\n";
         $nombre = trim(fgets(STDIN));
-        $pasajeros[$i]["Nombre"] = $nombre;
         echo "Apellido del pasajero n° ".($i+1).": "."\n";
         $apellido = trim(fgets(STDIN));
-        $pasajeros[$i]["Apellido"] = $apellido;
         echo "Documento del pasajero n° ".($i+1).": "."\n";
         $nroDoc = trim(fgets(STDIN));
-        $pasajeros[$i]["Nro documento"] = $nroDoc;
+        echo "Telefono del pasajero n° ".($i+1).": "."\n";
+        $telefono = trim(fgets(STDIN));
+        $pasajeros[$i] = new Pasajero($nombre, $apellido, $nroDoc, $telefono);
         $i = $i+1;
-
     }while($i!=$cantidad);
     return $pasajeros;
 }
@@ -226,20 +222,47 @@ function separador(){
 separador();
 echo "Bienvenidos a la base de datos de viajes"."\n";
 separador();
-echo "Ingrese la cantidad de viajes que desea ingresar: ";
-$viajes = trim(fgets(STDIN));
-$objViajes = acumViajes($viajes);
-$dimension = count($objViajes);
+
+//Arrays de pasajeros precargados
+//Viaje 1
+$pasajeros1[0] = new Pasajero("Juan","Perez",123456789,2995123456);
+$pasajeros1[1] = new Pasajero("Gabriel","Lopez",123789456,2995456123);
+//Viaje 2
+$pasajeros2[0] = new Pasajero("Juan","Perez",123456789,2995123456);
+$pasajeros2[1] = new Pasajero("Gabriel","Lopez",123789456,2995456123);
+//Viaje 3
+$pasajeros3[0] = new Pasajero("Pedro","Perez",987654321,2995123456);
+$pasajeros3[1] = new Pasajero("Juan","Lopez",102345678,2995123456);
+$pasajeros3[2] = new Pasajero("Jose","Perez",876543210,2995123456);
+
+//Array de viajes precargados
+
+$arrayViajes[0] = new Viaje(1,"Bs As",50,$pasajeros1);
+$arrayViajes[1] = new Viaje(2,"Nqn",30,$pasajeros2);
+$arrayViajes[2] = new Viaje(3,"Cba",80,$pasajeros3);
+
+echo "Desea agregar un viaje?";
+$siNo = strtolower(trim(fgets(STDIN)));
+while ($siNo<>"si" && $siNo<>"no"){
+    echo "Debe ingresar si o no: "."\n";
+    $siNo = strtolower(trim(fgets(STDIN)));
+}
+if ($siNo == "si"){
+    echo "Cuantos viajes que desea ingresar?"."\n";
+    $viajes = trim(fgets(STDIN));
+    array_merge ($arrayViajes, acumViajes($viajes));
+}
+$dimension = count($arrayViajes);
 $i = 0;
-separador();
-echo "Para ver o modificar un viaje, ingrese su código: ";
+echo "Para ver o modificar un viaje, ingrese un número del 1 al ".$dimension.": ";
 $codigo = trim(fgets(STDIN));
-$existe = existeViaje($objViajes, $codigo);
-while ($existe){
+$existe = existeViaje($arrayViajes, $codigo);
+while ($existe && ($i<$dimension)){
     echo "El codigo ingresado no concuerda, ingreselo nuevamente:";
     $codigo = trim(fgets(STDIN));
+    $existe = existeViaje($arrayViajes, $codigo);
 }
-$posicionViaje = buscarViaje($objViajes, $codigo);
+$posicionViaje = buscarViaje($arrayViajes, $codigo);
 
 
 $menu = seleccionarOpcion();
@@ -248,35 +271,35 @@ do{
 switch ($menu){
     case 1:
         separador();
-        agregarPasajero($objViajes[$posicionViaje]->getCantMax(), $objViajes[$posicionViaje]->getPasajerosViaje());
+        agregarPasajero($arrayViajes[$posicionViaje]->getCantMax(), $arrayViajes[$posicionViaje]->getPasajerosViaje());
         $menu = seleccionarOpcion();
         break;
 
     case 2:
         separador();
-        eliminarPasajero($objViajes[$posicionViaje]);
+        eliminarPasajero($arrayViajes[$posicionViaje]);
         $menu = seleccionarOpcion();
         break;
 
     case 3:
         separador();
-        modificarPasajero($objViajes[$posicionViaje]);
+        modificarPasajero($arrayViajes[$posicionViaje]);
         $menu = seleccionarOpcion();
         break;
         
     case 4:
         separador();
-        modificarInfoViaje($objViajes[$posicionViaje]);
+        modificarInfoViaje($arrayViajes[$posicionViaje]);
         $menu = seleccionarOpcion();
         break;
 
     case 5:
         separador();
-        echo $objViajes[$posicionViaje];
+        echo $arrayViajes[$posicionViaje];
         echo "Lista de pasajeros: ";
-        print_r ($objViajes[$posicionViaje]->getPasajerosViaje());
+        print_r ($arrayViajes[$posicionViaje]->getPasajerosViaje());
         $menu = seleccionarOpcion();
-        break;  
+        break; 
 
     default:
         echo "Debe introducir un número entre el 1 y el 6";
