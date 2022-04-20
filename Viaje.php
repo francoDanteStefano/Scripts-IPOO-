@@ -129,11 +129,13 @@ class Viaje
             }
         }while($encontro && $i < $limite);
         if($encontro){
-            echo "No se encontró el documento seleccionado";
+            $cambio = "No se encontró el documento seleccionado";
         }else{
             $arrayPasajero[$i][$clave] = $dato;
             $this->setPasajerosViaje($arrayPasajero);
+            $cambio = "Se han modificado los datos correctamente";
         }
+        return $cambio;
     }
 
     /* Modulo que muestra por pantalla una instancia de Viaje 
