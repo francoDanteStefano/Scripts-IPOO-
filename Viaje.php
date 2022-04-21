@@ -5,12 +5,12 @@ class Viaje
     /**Variables instancia de la clase
      * int $codigo
      * string $destino
-     * int $cantMax
+     * int $capMax
      * array $arrayObjPasajeros
      */
     private $codigo;
     private $destino;
-    private $cantMax;
+    private $capMax;
     private $arrayObjPasajeros;
 
 
@@ -34,10 +34,10 @@ class Viaje
     }
 
     /**
-     * Obtiene el valor de cantMax
+     * Obtiene el valor de capMax
      */ 
-    public function getCantMax(){
-        return $this->cantMax;
+    public function getCapMax(){
+        return $this->capMax;
     }
 
     /**
@@ -45,6 +45,12 @@ class Viaje
      */ 
     public function getArrayObjPasajeros(){
         return $this->arrayObjPasajeros;
+    }
+    /**
+     * Obtiene el valor del objeto ResponsableV
+     */ 
+    public function getObjResponsableV(){
+        return $this->objResponsableV;
     }
 
 
@@ -72,12 +78,12 @@ class Viaje
     }
 
     /**
-     * Establecer el valor de cantMax
-     * @param int $cantMax
+     * Establecer el valor de capMax
+     * @param int $capMax
      * @return self
      */ 
-    public function setCantMax($cantMax){
-        $this->cantMax = $cantMax;
+    public function setCapMax($capMax){
+        $this->capMax = $capMax;
     }
 
     /**
@@ -88,6 +94,15 @@ class Viaje
     public function setArrayObjPasajeros($arrayObjPasajeros){
         $this->arrayObjPasajeros = $arrayObjPasajeros;
     }
+
+    /**
+     * Establece el valor del objeto ResponsableV
+     * @param array $pasajerosViaje
+     * @return self
+     */ 
+    public function setObjResponsableV($objResponsableV){
+        $this->objResponsableV = $objResponsableV;
+    }
     
     
     /*****************************************************************/
@@ -96,57 +111,65 @@ class Viaje
     
     
     /**
-     * Módulo constructor de la clase Viaje, tiene por parametro los 
+     * Método constructor de la clase Viaje, tiene por parametro los 
      * valores que se le asignan a las variables de la clase
      * @param int $codigo
-     * @param int $cantMax
+     * @param int $capMax
      * @param array $pasajerosViaje
      * @param string $destino
+     * @param object $objResponsableV
      */
-    public function __construct($codigo, $destino, $cantMax, $arrayObjPasajeros){   
+    public function __construct($codigo, $destino, $capMax, $arrayObjPasajeros, $objResponsableV){   
         $this->codigo = $codigo;
         $this->destino = $destino;
-        $this->cantMax = $cantMax;
+        $this->capMax = $capMax;
         $this->arrayObjPasajeros = $arrayObjPasajeros;
+        $this->objResponsableV = $objResponsableV;
     }
 
     /**
-     * Este modulo modifica los datos de un pasajero
-     * @param int $documento
-     * @param string $clave
+     * Método que recibe por parametro un entero y un dato 
+     * y modifica la informacion del viaje.
+     * @param int $opcion
      * @param string $dato
      */
-    public function cambiarDatoPasajero($documento,$clave,$dato){
-        $arrayPasajero = $this->getArrayObjPasajeros();
-        $i = 0;
-        $limite = count($arrayPasajero);
-        do{
-            $encontro = true;
-            if($arrayPasajero[$i]->getNroDocumento() == $documento){
-                $encontro = false;
-            }else{
-            $i++;
-            }
-        }while($encontro && $i < $limite);
-        if($encontro){
-            $cambio = "No se encontró el documento seleccionado";
-        }else{
-            $arrayPasajero[$i][$clave] = $dato;
-            $this->setPasajerosViaje($arrayPasajero);
-            $cambio = "Se han modificado los datos correctamente";
-        }
-        return $cambio;
+    public function modificarViaje($opcion, $dato){
+    switch ($opcion){
+        case 1:
+            $this->setCodigo($dato);
+            break;
+        case 2:
+            $this->setDestino($dato);
+            break;
+        case 3:
+            $this->setCapMax($dato);
+            break;
+    }
     }
 
-    /* Modulo que muestra por pantalla una instancia de Viaje 
-     * return string
+    /** Método que muestra por pantalla una instancia de Viaje 
+     * @return string
      */
     public function __toString(){
         return "*************************************************"."\n".
                "Código de viaje: ".$this->getCodigo()."\n".
                "Destino: ".$this->getDestino()."\n".
-               "Cantidad de pasajeros: ".$this->getCantMax()."\n".
+               "Capacidad máxima de pasajeros: ".$this->getCapMax()."\n".
+               "Pasajeros: ".$this->pasajerosToString()."\n".
                "*************************************************"."\n";
+    }
+
+    /** Método que convierte la coleccion de los objetos 
+     * pasajeros en una cadena de caracteres. 
+     * @return string
+     */
+    public function pasajerosToString(){
+        $coleccion = $this->getArrayObjPasajeros();
+        $string = "";
+        foreach ($coleccion as $pasajero){
+            $string .= $pasajero;
+        }
+        return $string;
     }
 }
 ?>
