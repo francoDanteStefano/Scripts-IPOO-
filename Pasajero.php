@@ -86,6 +86,7 @@ class Pasajero
     /*************************** FUNCIONES ***************************/
     /*****************************************************************/
 
+    
     /**
      * Módulo constructor de la clase Pasajero, tiene por parametro los 
      * valores que se le asignan a las variables de la clase

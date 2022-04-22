@@ -134,29 +134,57 @@ class Viaje
      * @param string $dato
      */
     public function modificarViaje($opcion, $dato){
-    switch ($opcion){
-        case 1:
-            $this->setCodigo($dato);
-            break;
-        case 2:
-            $this->setDestino($dato);
-            break;
-        case 3:
-            $this->setCapMax($dato);
-            break;
-    }
+        switch ($opcion){
+            case 1:
+                $this->setCodigo($dato);
+                break;
+            case 2:
+                $this->setDestino($dato);
+                break;
+            case 3:
+                $this->setCapMax($dato);
+                break;
+        }
     }
 
-    /** Método que muestra por pantalla una instancia de Viaje 
-     * @return string
+    /**
+     * Método que recibe por parametro un entero y un dato 
+     * y modifica los datos del objeto ResponsableV.
+     * @param int $opcion
+     * @param string $dato
      */
-    public function __toString(){
-        return "*************************************************"."\n".
-               "Código de viaje: ".$this->getCodigo()."\n".
-               "Destino: ".$this->getDestino()."\n".
-               "Capacidad máxima de pasajeros: ".$this->getCapMax()."\n".
-               "Pasajeros: ".$this->pasajerosToString()."\n".
-               "*************************************************"."\n";
+    public function modificarRespon($opcion, $dato){
+        switch ($opcion){
+            case 1:
+                $this->objResponsableV->setNombre($dato);
+                break;
+            case 2:
+                $this->objResponsableV->setApellido($dato);
+                break;
+            case 3:
+                $this->objResponsableV->setNroLicencia($dato);
+                break;
+            case 4:
+                $this->objResponsableV->setNroEmpleado($dato);
+                break;
+        }
+    }
+    
+    /**
+     * Esta función solicita los datos datos para crear un objeto Pasajero y lo retorna.
+     * @param int $dni
+     * @return boolean 
+     */
+    public function existePasajero ($dni){
+        $coleccion = $this->getArrayObjPasajeros();
+        $existe = false;
+        foreach ($coleccion as $pasajero){
+            $docPasajero = $pasajero->getNroDocumento();
+            if ($dni == $docPasajero){
+                $existe = true;
+            }
+        }
+        return $existe;
     }
 
     /** Método que convierte la coleccion de los objetos 
@@ -171,5 +199,17 @@ class Viaje
         }
         return $string;
     }
+
+    /** Método que muestra por pantalla una instancia de Viaje 
+     * @return string
+     */
+    public function __toString(){
+        return "*************************************************"."\n".
+               "Código de viaje: ".$this->getCodigo()."\n".
+               "Destino: ".$this->getDestino()."\n".
+               "Capacidad máxima de pasajeros: ".$this->getCapMax()."\n".
+               "Pasajeros: "."\n".$this->pasajerosToString()."\n".
+               "*************************************************"."\n";
+    } 
 }
 ?>
