@@ -12,6 +12,7 @@ class Viaje
     private $destino;
     private $capMax;
     private $arrayObjPasajeros;
+    private $objResponsableV;
 
 
     /*****************************************************************/
@@ -169,22 +170,116 @@ class Viaje
                 break;
         }
     }
-    
+
     /**
-     * Esta función solicita los datos datos para crear un objeto Pasajero y lo retorna.
-     * @param int $dni
-     * @return boolean 
+     * Esta función modifica los datos de un pasajero
+     * @param object $objetoViaje
      */
-    public function existePasajero ($dni){
-        $coleccion = $this->getArrayObjPasajeros();
-        $existe = false;
-        foreach ($coleccion as $pasajero){
-            $docPasajero = $pasajero->getNroDocumento();
-            if ($dni == $docPasajero){
-                $existe = true;
+    function modificarPasajero($dni, $opcion, $dato)
+    {
+        $arrayPas = $this->getArrayObjPasajeros();
+        $i = $this->buscarPasajero($dni);
+        if ($i <> null){
+            switch($opcion){
+                case 1: 
+                    $arrayPas[$i]->setNombre($dato);
+                    break;
+
+                case 2: 
+                    $arrayPas[$i]->setApellido($dato);
+                    break;
+
+                case 3: 
+                    $arrayPas[$i]->setTelefono($dato);
+                    break;
             }
+            $modificado = true;
+        }else{
+            $modificado = false;
         }
-        return $existe;
+        return $modificado;
+    }
+
+    /**
+     * Devuelve la posición del pasajero dentro de la colección que tiene el viaje,
+     * o null en caso que no exista.
+     * @param int $documento
+     * @return int
+     */
+    public function buscarPasajero($dni){
+        $arrayPas = $this->getArrayObjPasajeros();
+        $i = 0;
+        $cant = count($arrayPas);
+        do{
+            $noEncuentra = true;
+            if ($arrayPas[$i]->getNroDocumento() == $dni){
+                $noEncuentra = false;
+            }else{
+                $i ++;
+            }
+        }while ($noEncuentra && $i<=$cant);
+        if($noEncuentra){
+            $i = null;
+        }
+        return $i;
+    }
+
+    /**
+     * Método que agrega un pasajero a la coleccion de pasajeros, siempre 
+     * y cuando no este previamente cargado. Luego retorna true si fue cargado,
+     * false caso contrario.
+     * @param string $limite
+     * @param string $arrayPasajeros
+     * @param int $objetoViaje
+     * @param int $telefono
+     * @return boolean
+     */
+    public function agregarPasajero($nombre, $apellido, $dni, $telefono){
+        $coleccionPas = $this->getArrayObjPasajeros();
+        $verficacion = $this->buscarPasajero($dni);
+        if ($verficacion == null){
+            $nuevoPasajero = new Pasajero($nombre,$apellido,$dni,$telefono);
+            $this->setArrayObjPasajeros(array_push($coleccionPas,$nuevoPasajero));
+            $agregado = true;
+        }else{
+            $agregado = false;
+        }
+        return $agregado;
+    }
+
+    /**
+     * Función que elimina un pasajero de la coleccion de pasajeros y
+     * retorna true si fue eliminado, false caso contrario.
+     * @param int $dni
+     * @return boolean
+     */
+    public function eliminarPasajero($dni){
+        $posicion = $this->buscarPasajero($dni);
+        $arrayPas = $this->getArrayObjPasajeros();
+        if ($posicion <> null){
+            unset($arrayPas[$posicion]);
+            sort($arrayPas);
+            $this->setArrayObjPasajeros ($arrayPas);
+            $eliminado = true;
+        }else{
+            $eliminado = false;
+        }
+        return $eliminado;
+    }
+
+    /**
+     * Función que recorre la coleccion de pasajeros y retorna el objeto Pasajero que se desea mostrar.
+     * @param int $dni
+     * @return object
+     */
+    public function mostrarPasajero($dni){
+        $posicion = $this->buscarPasajero($dni);
+        if ($posicion <> null){
+            $objPasajero = $this->getArrayObjPasajeros()[$posicion];
+        }else{
+            $objPasajero = null;
+        }
+        return $objPasajero;
     }
 
     /** Método que convierte la coleccion de los objetos 
@@ -194,8 +289,8 @@ class Viaje
     public function pasajerosToString(){
         $coleccion = $this->getArrayObjPasajeros();
         $string = "";
-        foreach ($coleccion as $pasajero){
-            $string .= $pasajero;
+        foreach ($coleccion as $objPasajero){
+            $string .= $objPasajero;
         }
         return $string;
     }

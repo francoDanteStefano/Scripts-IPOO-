@@ -107,8 +107,8 @@ class Pasajero
                "Pasajero: "."\n".
                "Nombre: ".$this->getNombre()."\n".
                "Apellido: ".$this->getApellido()."\n".
-               "Numero de documento: ".$this->getNroDocumento()."\n".
-               "Telefono: ".$this->getTelefono()."\n".
+               "Número de documento: ".$this->getNroDocumento()."\n".
+               "Teléfono: ".$this->getTelefono()."\n".
                "*************************************************"."\n";
     }
 }
