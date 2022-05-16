@@ -11,6 +11,8 @@ class Viaje
     private $codigo;
     private $destino;
     private $capMax;
+    private $importeAsiento;
+    private $tipoAsiento;
     private $arrayObjPasajeros;
     private $objResponsableV;
 
@@ -39,6 +41,20 @@ class Viaje
      */ 
     public function getCapMax(){
         return $this->capMax;
+    }
+
+    /**
+     * Obtiene el valor de importe
+     */ 
+    public function getImporteAsiento(){
+        return $this->importeAsiento;
+    }
+
+    /**
+     * Obtiene el valor de tipoAsiento
+     */ 
+    public function getTipoAsiento(){
+        return $this->tipoAsiento;
     }
 
     /**
@@ -88,6 +104,20 @@ class Viaje
     }
 
     /**
+     * Establece el valor de importe
+     */ 
+    public function setImporteAsiento($importeAsiento){
+        $this->importeAsiento = $importeAsiento;
+    }
+
+    /**
+     * Establece el valor de tipoAsiento
+     */ 
+    public function setTipoAsiento($tipoAsiento){
+        $this->tipoAsiento = $tipoAsiento;
+    }
+
+    /**
      * Establece el valor de nombre dentro del array pasajerosViaje
      * @param array $pasajerosViaje
      * @return self
@@ -104,7 +134,7 @@ class Viaje
     public function setObjResponsableV($objResponsableV){
         $this->objResponsableV = $objResponsableV;
     }
-    
+
     
     /*****************************************************************/
     /*************************** FUNCIONES ***************************/
@@ -120,12 +150,15 @@ class Viaje
      * @param string $destino
      * @param object $objResponsableV
      */
-    public function __construct($codigo, $destino, $capMax, $arrayObjPasajeros, $objResponsableV){   
+    public function __construct($codigo, $destino, $capMax, $importeAsiento, $tipoAsiento, $arrayObjPasajeros, $objResponsableV){   
         $this->codigo = $codigo;
         $this->destino = $destino;
         $this->capMax = $capMax;
+        $this->importeAsiento = $importeAsiento;
+        $this->tipoAsiento = $tipoAsiento;
         $this->arrayObjPasajeros = $arrayObjPasajeros;
         $this->objResponsableV = $objResponsableV;
+
     }
 
     /**
@@ -225,6 +258,16 @@ class Viaje
     }
 
     /**
+     * Este modulo verfica que haya lugar para nuevos pasajeros
+     * @return boolean
+     */
+    public function hayPasajesDisponible(){
+       $cantPasajeros = count($this->getArrayObjPasajeros());
+       $disponible = ($cantPasajeros < $this->getCapMax()) ? true : false;
+       return $disponible;
+    }
+
+    /**
      * Método que agrega un pasajero a la coleccion de pasajeros, siempre 
      * y cuando no este previamente cargado. Luego retorna true si fue cargado,
      * false caso contrario.
@@ -237,7 +280,7 @@ class Viaje
     public function agregarPasajero($nombre, $apellido, $dni, $telefono){
         $coleccionPas = $this->getArrayObjPasajeros();
         $verficacion = $this->buscarPasajero($dni);
-        if ($verficacion == null){
+        if ($verficacion == null && $this->hayPasajesDisponible()){
             $nuevoPasajero = new Pasajero($nombre,$apellido,$dni,$telefono);
             $this->setArrayObjPasajeros(array_push($coleccionPas,$nuevoPasajero));
             $agregado = true;
@@ -246,7 +289,20 @@ class Viaje
         }
         return $agregado;
     }
-
+    /**
+     * Función que vende un pasaje, de ser posible, y retorna el importe del mismo
+     * @param object
+     * @return int
+     */
+    public function venderPasaje($objPasajero){
+        if($this->hayPasajesDisponible()){
+            $this->setArrayObjPasajeros(array_push($this->getArrayObjPasajeros(), $objPasajero));
+            $importeViaje = $this->getImporteAsiento();
+        }else{
+            $importeViaje = null;
+        }
+        return $importeViaje;
+    }
     /**
      * Función que elimina un pasajero de la coleccion de pasajeros y
      * retorna true si fue eliminado, false caso contrario.

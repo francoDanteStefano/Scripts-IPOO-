@@ -1,16 +1,14 @@
 <?php
- /*  
- * Se debe verificar que el pasajero no este cargado mas de una vez en el viaje. 
- */
 include "Viaje.php";
 include "Pasajero.php";
 include "ResponsableV.php";
+include "Aereo.php";
+include "Terrestre.php";
 
 
 /**********************************************************************************/
 /*********************************** FUNCIONES ************************************/
 /**********************************************************************************/
-
 
 /**
  * Este módulo muestra por pantalla el menú y retorna la opción elegida por el usuario
@@ -19,7 +17,7 @@ include "ResponsableV.php";
 function seleccionarOpcion(){
     separador();
     echo "\n"."MENU DE OPCIONES"."\n";
-    echo "1) Agregar pasajero"."\n";
+    echo "1) Vender un pasaje"."\n";
     echo "2) Eliminar un pasajero"."\n";
     echo "3) Modificar un pasajero"."\n";
     echo "4) Mostrar un pasajero"."\n";
@@ -49,7 +47,9 @@ function acumViajes ($cant){
         $dest = trim(fgets(STDIN));
         echo "Ingrese la capacidad máxima pasajeros del viaje n°".($i + 1).":"."\n";
         $capMax = trim(fgets(STDIN));
-        echo "Ingrese los datos del responsable de vuelo del viaje n°".($i + 1).":"."\n";
+        echo "Ingrese el importe del viaje n°".($i + 1).":"."\n";
+        $importe = trim(fgets(STDIN));
+        echo "Ingrese los datos del responsable del viaje n°".($i + 1).":"."\n";
         echo "Nombre:  ";
         $nombre = trim(fgets(STDIN));
         echo "\n"."Apellido:  ";
@@ -60,9 +60,114 @@ function acumViajes ($cant){
         $nroEmpleado = trim(fgets(STDIN));
         $responsable = new ResponsableV($nombre, $apellido, $nroLicencia, $nroEmpleado);
         $arrayPasajeros = [];
-        $objViajes[$i] = new Viaje ($cod, $dest, $capMax, $arrayPasajeros, $responsable);
+        echo "Ingrese el tipo de viaje: Aereo  o Terrestre: ";
+        $tipoViaje = strtolower(trim(fgets(STDIN)));
+        if ($tipoViaje == "aereo"){
+            echo "Ingrese el tipo de asiento: 1(Primera Clase) o 2(Regular)"."\n";
+            $tipoAsiento= trim(fgets(STDIN));
+            echo "Ingrese el número de vuelo:"."\n";
+            $nroVuelo = trim(fgets(STDIN));
+            echo "Ingrese el nombre de la aerolinea:"."\n";
+            $nombreAero = trim(fgets(STDIN));
+            echo "Ingrese las escalas del vuelo:"."\n";
+            $escalas = trim(fgets(STDIN));
+            $objViajes[$i] = new Aereo ($cod, $dest, $capMax, $importe, $tipoAsiento, $arrayPasajeros, $responsable, $nroVuelo, $nombreAero, $escalas);
+        }else{
+            echo "Ingrese el tipo de asiento: 1(Cama) o 2(Semicama)"."\n";
+            $tipoAsiento= trim(fgets(STDIN));
+            $objViajes[$i] = new Terrestre($cod, $dest, $capMax, $importe, $tipoAsiento, $arrayPasajeros, $responsable);
+        }
+        
     }
     return $objViajes;
+}
+
+/**
+ * Esta función crea una cantidad determinada de pasajeros y los almacena en un array.
+ * Retorna el array
+ * @param object $objetoViaje
+ */
+function nuevoPasajero(){
+    echo "Introduzca el nombre:"."\n";
+    $nombre = trim(fgets(STDIN));
+    echo "Introduzca el apellido:"."\n";
+    $apellido = trim(fgets(STDIN));
+    echo "Introduzca el documento:"."\n";
+    $dni = trim(fgets(STDIN));
+    echo "Introduzca el teléfono:"."\n";
+    $telefono = trim(fgets(STDIN));
+    $objPasajero = new Pasajero ($nombre, $apellido, $dni, $telefono);
+    return $objPasajero;
+}
+
+/**
+ * Esta función modifica los datos del objeto ResponsableV.
+ * @param object $objetoViaje
+ */
+function modificarUnPasajero($objetoViaje){
+    echo "Introduzca el documento del pasajero:"."\n";
+        $dni = trim(fgets(STDIN));
+    do{
+        echo "Ingrese 1, si desea modificar el nombre."."\n";
+        echo "Ingrese 2, si desea modificar el apellido."."\n";
+        echo "Ingrese 3, si desea modificar el teléfono."."\n";
+        echo "Que desea modificar?"."\n";
+        $opcion = trim(fgets(STDIN));
+        echo "Introduzca el nuevo valor:"."\n";
+        $dato = trim(fgets(STDIN));
+        $modifica = $objetoViaje->modificarPasajero($dni, $opcion, $dato);
+        if($modifica){
+            echo "El pasajero fue modificado correctamente:"."\n";
+            echo $objetoViaje->mostrarPasajero($dni)."\n";
+            echo "Desea modificar otro dato?"."\n";
+            $siNo = strtolower(trim(fgets(STDIN)));
+        }else{
+            echo "El pasajero no existe. Introduzca otro documento:"."\n";
+            $dni = trim(fgets(STDIN));
+            $siNo = "si";
+        }
+    }while($siNo == "si");
+}
+
+/**
+ * Esta función modifica los datos del objeto ResponsableV.
+ * @param object $objetoViaje
+ */
+function modificarResponsable($objetoViaje){
+    do{
+        echo "Ingrese 1, si desea modificar el nombre."."\n";
+        echo "Ingrese 2, si desea modificar el apellido."."\n";
+        echo "Ingrese 3, si desea modificar número de licencia."."\n";
+        echo "Ingrese 4, si desea modificar número de empleado."."\n";
+        echo "Que desea modificar?"."\n";
+        $opcion = trim(fgets(STDIN));
+        echo "Introduzca el nuevo valor:"."\n";
+        $dato = trim(fgets(STDIN));
+        $objetoViaje->modificarViaje($opcion,$dato);
+        echo "Desea modificar otro dato?";
+        $siNo = trim(fgets(STDIN));
+    }while($siNo == "si");
+    echo "Los nuevos datos del responsable son:".$objetoViaje->getResponsableV()."\n";
+}
+
+/**
+ * Esta función modifica los datos de un viaje.
+ * @param object $objetoViaje
+ */
+function modificarInfoViaje($objetoViaje){
+    echo "Ingrese 1, si desea modificar el código."."\n";
+    echo "Ingrese 2, si desea modificar el destino."."\n";
+    echo "Ingrese 3, si desea modificar la capacidad máxima de pasajeros."."\n";
+    echo "Que desea modificar?"."\n";
+    $opcion = trim(fgets(STDIN));
+    while (($opcion <> 1)&&($opcion <> 2)&&($opcion <> 3)){
+        echo "Solo puede ingresar 1, 2 o 3 como opcion válida:"."\n";
+        $opcion = trim(fgets(STDIN));
+    }
+    echo "Introduzca el nuevo valor:"."\n";
+    $dato = trim(fgets(STDIN));
+    $objetoViaje->modificarViaje($opcion,$dato);
+    echo $objetoViaje;
 }
 
 /**
@@ -110,93 +215,31 @@ function buscarViaje($arrayViajes, $codigoViaje){
     return $i;
 }
 
-/**
- * Esta función modifica los datos de un viaje.
- * @param object $objetoViaje
- */
-function modificarInfoViaje($objetoViaje){
-    echo "Ingrese 1, si desea modificar el código."."\n";
-    echo "Ingrese 2, si desea modificar el destino."."\n";
-    echo "Ingrese 3, si desea modificar la capacidad máxima de pasajeros."."\n";
-    echo "Que desea modificar?"."\n";
-    $opcion = trim(fgets(STDIN));
-    while (($opcion <> 1)&&($opcion <> 2)&&($opcion <> 3)){
-        echo "Solo puede ingresar 1, 2 o 3 como opcion válida:"."\n";
-        $opcion = trim(fgets(STDIN));
-    }
-    echo "Introduzca el nuevo valor:"."\n";
-    $dato = trim(fgets(STDIN));
-    $objetoViaje->modificarViaje($opcion,$dato);
-    echo $objetoViaje;
-}
-
-/**
- * Esta función modifica los datos del objeto ResponsableV.
- * @param object $objetoViaje
- */
-function modificarResponsable($objetoViaje){
-    do{
-        echo "Ingrese 1, si desea modificar el nombre."."\n";
-        echo "Ingrese 2, si desea modificar el apellido."."\n";
-        echo "Ingrese 3, si desea modificar número de licencia."."\n";
-        echo "Ingrese 4, si desea modificar número de empleado."."\n";
-        echo "Que desea modificar?"."\n";
-        $opcion = trim(fgets(STDIN));
-        echo "Introduzca el nuevo valor:"."\n";
-        $dato = trim(fgets(STDIN));
-        $objetoViaje->modificarViaje($opcion,$dato);
-        echo "Desea modificar otro dato?";
-        $siNo = trim(fgets(STDIN));
-    }while($siNo == "si");
-    echo "Los nuevos datos del responsable son:".$objetoViaje->getResponsableV()."\n";
-}
-/**
- * Esta función modifica los datos del objeto ResponsableV.
- * @param object $objetoViaje
- */
-function modificarUnPasajero($objetoViaje){
-    echo "Introduzca el documento del pasajero:"."\n";
-        $dni = trim(fgets(STDIN));
-    do{
-        echo "Ingrese 1, si desea modificar el nombre."."\n";
-        echo "Ingrese 2, si desea modificar el apellido."."\n";
-        echo "Ingrese 3, si desea modificar el teléfono."."\n";
-        echo "Que desea modificar?"."\n";
-        $opcion = trim(fgets(STDIN));
-        echo "Introduzca el nuevo valor:"."\n";
-        $dato = trim(fgets(STDIN));
-        $modifica = $objetoViaje->modificarPasajero($dni, $opcion, $dato);
-        if($modifica){
-            echo "El pasajero fue modificado correctamente:"."\n";
-            echo $objetoViaje->mostrarPasajero($dni)."\n";
-            echo "Desea modificar otro dato?"."\n";
-            $siNo = strtolower(trim(fgets(STDIN)));
+function buscarDestino($arrayViajes, $destino){
+    $dimension = count($arrayViajes);
+    for ($i=0; $i<$dimension; $i++){
+        $e = 0;
+        if(strtolower($arrayViajes[$i]->getDestino()) == strtolower($destino) && $arrayViajes[$i]->hayPasajesDisponible()){
+            $objetosViaje[$e] = $arrayViajes[$i];
+            $e++;
         }else{
-            echo "El pasajero no existe. Introduzca otro documento:"."\n";
-            $dni = trim(fgets(STDIN));
-            $siNo = "si";
+            $i++;
         }
-    }while($siNo == "si");
+    }
+    return $objetosViaje;
 }
 
-/**
- * Esta función crea una cantidad determinada de pasajeros y los almacena en un array.
- * Retorna el array
- * @param object $objetoViaje
- */
-function nuevosPasajeros($cantidad, $objetoViaje){
-    for ($i = 0; $i < $cantidad; $i++){
-        echo "Introduzca el nombre del pasajero n° ".($i+1).":"."\n";
-        $nombre = trim(fgets(STDIN));
-        echo "Introduzca el apellido del pasajero n° ".($i+1).":"."\n";
-        $apellido = trim(fgets(STDIN));
-        echo "Introduzca el documento del pasajero n° ".($i+1).":"."\n";
-        $dni = trim(fgets(STDIN));
-        echo "Introduzca el teléfono del pasajero n° ".($i+1).":"."\n";
-        $telefono = trim(fgets(STDIN));
-        $arrayPasajeros[$i] = $objetoViaje->agregarPasajero($nombre, $apellido, $dni, $telefono);
-    }
-    return $arrayPasajeros;
+function encontrarViaje($destino, $arrayViajes){
+    $arrayDestinos = buscarDestino($arrayViajes, $destino);
+    $destinos = codigoViajesToString($arrayDestinos);
+    echo $destinos;
+    return $arrayDestinos;
+}
+
+function venderDestino($codigo, $viajes, $objPasajero){
+    $i = buscarViaje($viajes, $codigo);
+    $importeViaje = $viajes[$i]->venderPasaje($objPasajero);
+    return $importeViaje;
 }
 
 /**
@@ -211,7 +254,6 @@ function codigoViajesToString($arrayViajes){
     }
     return $string;
 }
-
 /**
  * Función que muestra por pantalla un separador de asteriscos 
  */
@@ -244,9 +286,9 @@ $responsableV2= new ResponsableV("Michael", "Jonhson", 147276, 1377);
 $responsableV3 = new ResponsableV("Cage", "Fefer", 786555, 4578);
 
 //Array de viajes 
-$arrayViajes[0] = new Viaje(98743, "Bs As", 10, $pasajeros1, $responsableV1);
-$arrayViajes[1] = new Viaje(12547, "Nqn", 10, $pasajeros2, $responsableV2);
-$arrayViajes[2] = new Viaje(36963, "Cba", 10, $pasajeros3, $responsableV3);
+$arrayViajes[0] = new Aereo(98743, "Bs As", 120, 1000, 1, $pasajeros1, $responsableV1, "AR111", "FlyBondi", 0);
+$arrayViajes[1] = new Terrestre(12547, "Nqn", 110, 850, 1, $pasajeros2, $responsableV2);
+$arrayViajes[2] = new Aereo(36963, "Nqn", 120, 100, 0,$pasajeros3, $responsableV3, "AR541", "FlyBondi", 1);
 
 
 /**********************************************************************************/
@@ -287,19 +329,36 @@ do{
     switch ($menu){
         case 1:
             separador();
-            $capacidadMax = $arrayViajes[$posicionViaje]->getCapMax();
-            $arrayPasajeros = $arrayViajes[$posicionViaje]->getArrayObjPasajeros();
-            echo "Cuantos pasajeros desea agregar?"."\n";
-            $cantidad = trim(fgets(STDIN));
-            $nuevaCantidad = $cantidad + count($arrayPasajeros);
-            if($nuevaCantidad < $capacidadMax){
-                $coleccionPasajeros = nuevosPasajeros($cantidad, $arrayViajes[$posicionViaje]);
-                $nuevaColeccion = array_merge($arrayPasajeros,$coleccionPasajeros);
-                $arrayViajes[$posicionViaje]->setArrayObjPasajeros($nuevaColeccion);
+            echo "Ingrese el tipo de viaje que desea realizar:"."\n";
+            echo "Opción 1: Ida"."\n"."Opción 2: Ida y vuelta"."\n";
+            $tipoViaje = trim(fgets(STDIN));
+            if ($tipoViaje == 1){
+                echo "Indique el destino: "."\n";
+                $destino = strtolower(trim(fgets(STDIN)));
+                $viajesIda = encontrarViaje($destino, $arrayViajes);
+                echo "Ingrese el código del viaje que desea reservar:\n";
+                $codigo = trim(fgets(STDIN));
+                echo "Ingrese los datos del viajante:\n";
+                $objPasajero = nuevoPasajero();
+                $importe = venderDestino($codigo, $viajesIda, $objPasajero);
+                echo "El importe total de su viaje es: ".$importe;
             }else{
-                $espacioDisp = $capacidadMax - count($arrayPasajeros);
-                echo "No se han cargado los pasajeros. Solo quedan ".$espacioDisp." lugares disponibles."."\n";
+                echo "Indique el destino:"."\n";
+                $destino = strtolower(trim(fgets(STDIN)));
+                $viajesIda = encontrarViaje($destino, $arrayViajes);
+                echo "Indique la ciudad de origen:"."\n";
+                $origen = strtolower(trim(fgets(STDIN)));
+                $viajesVuelta = encontrarViaje($origen, $arrayViajes);
+                echo "Ingrese los datos del viajante:\n";
+                $objPasajero = nuevoPasajero();
+                $importeIda = venderDestino($codigo, $viajesIda, $objPasajero);
+                $importeVuelta = venderDestino($codigo, $viajesVuelta, $objPasajero);
+                $importe = $importeIda + ($importeVuelta*0.5);
+                echo "El importe total de su viaje es: ".$importe;
             }
+            
+            echo "Su boleto ha sido vendido, tiene un importe de: ".$importe."\n";
+
             $menu = seleccionarOpcion();
             break;
 
