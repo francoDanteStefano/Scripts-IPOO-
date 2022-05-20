@@ -24,11 +24,10 @@ class Terrestre extends Viaje
         }
         return $importeTot;
     }
-    
-    /**************************************/
-    /********* FUNCIONES PRIVADAS *********/
-    /**************************************/
 
-    
+    public function __toString(){
+        $string = parent::__toString();
+        return $string;
+    }
 }
 ?>
