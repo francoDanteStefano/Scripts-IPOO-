@@ -296,7 +296,8 @@ class Viaje
      */
     public function venderPasaje($objPasajero){
         if($this->hayPasajesDisponible()){
-            $this->setArrayObjPasajeros(array_push($this->getArrayObjPasajeros(), $objPasajero));
+            $nuevoArray = array_push($this->getArrayObjPasajeros(), $objPasajero);
+            $this->setArrayObjPasajeros($nuevoArray);
             $importeViaje = $this->getImporteAsiento();
         }else{
             $importeViaje = null;

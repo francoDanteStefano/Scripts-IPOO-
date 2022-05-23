@@ -19,7 +19,7 @@ class Terrestre extends Viaje
     public function venderPasaje($objPasajero){
         $importe = parent::venderPasaje($objPasajero);
         if($importe != null){
-            $tipoAsiento = parent::getTipoAsiento();
+            $tipoAsiento = $this->getTipoAsiento();
             $importeTot = ($tipoAsiento == 1) ? ($importe * 1.25) : $importe; // 1 Representa el asiento de tipo Cama
         }
         return $importeTot;
