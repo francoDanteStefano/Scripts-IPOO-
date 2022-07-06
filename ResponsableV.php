@@ -1,11 +1,13 @@
 <?php
 
 class ResponsableV{
-    /**Variables instancia de la clase ResponsableV
+    /**
+     * Variables instancia de la clase ResponsableV
      * int $numeroLicencia
      * int $numeroEmpleado
      * string $nombre
      * string $apellido
+     * string $mensajeError
      */
     private $numeroEmpleado; 
     private $numeroLicencia;
@@ -109,7 +111,7 @@ class ResponsableV{
     }
 
     /**
-     * Módulo que setea los valores dados por parametros en las variables instancia de la clase
+     * Módulo que setea los valores dados por parámetros en las variables instancia de la clase
      * @param string $nombre
      * @param string $apellido
      * @param int $numeroLicencia
@@ -129,8 +131,10 @@ class ResponsableV{
     public function insertar(){
 		$bd = new BaseDatos();
 		$resp = false;
-		$insertarResponsable = "INSERT INTO responsable(rnumerolicencia, rnombre,  rapellido) 
-				                VALUES ('".$this->getNumeroLicencia()."','".$this->getNombre()."','".$this->getApellido()."')";
+		$insertarResponsable = "INSERT INTO responsable(rnumerolicencia, rnombre, rapellido) 
+				                VALUES (".$this->getNumeroLicencia().",
+                                        '".$this->getNombre()."',
+                                        '".$this->getApellido()."')";
 		if($bd->iniciar()){
 			if($bd->ejecutar($insertarResponsable)){
 			    $resp = true;
@@ -150,8 +154,11 @@ class ResponsableV{
 	public function modificar(){
 	    $resp = false; 
 	    $bd = new BaseDatos();
-		$modificarResponsable = "UPDATE responsable SET rapellido = '".$this->getApellido()."', rnombre = '".$this->getNombre()."'
-                           , rnumerolicencia = '".$this->getNumeroLicencia()."' WHERE rnumeroempleado = '". $this->getNumeroEmpleado()."'";
+		$modificarResponsable = "UPDATE responsable 
+                                 SET rapellido = '".$this->getApellido()."',
+                                     rnombre = '".$this->getNombre()."',
+                                     rnumerolicencia = ".$this->getNumeroLicencia()."
+                                 WHERE rnumeroempleado = ". $this->getNumeroEmpleado()."";
 		if($bd->iniciar()){
 			if($bd->ejecutar($modificarResponsable)){
 			    $resp = true;
@@ -172,7 +179,8 @@ class ResponsableV{
 		$bd = new BaseDatos();
 		$resp = false;
 		if($bd->iniciar()){
-			$borrarResponsable = "DELETE FROM responsable WHERE rnumeroempleado = ".$this->getNumeroEmpleado();
+			$borrarResponsable = "DELETE FROM responsable 
+                                  WHERE rnumeroempleado = ".$this->getNumeroEmpleado();
 			if($bd->ejecutar($borrarResponsable)){
 				$resp = true;
 			}else{
@@ -189,7 +197,8 @@ class ResponsableV{
 	 */
     public function buscar($numeroEmpleado){
 		$bd = new BaseDatos();
-		$buscarResponsable = "SELECT * FROM responsable WHERE rnumeroempleado = ".$numeroEmpleado;
+		$buscarResponsable = "SELECT * FROM responsable 
+                              WHERE rnumeroempleado = ".$numeroEmpleado;
 		$resp = false;
 		if($bd->iniciar()){
 			if($bd->ejecutar($buscarResponsable)){
@@ -210,7 +219,7 @@ class ResponsableV{
 	}
 
     /**
-	 * Módulo que recibe una condicion por parametro, busca los responsable de viaje en la base de datos y los retorna en un array
+	 * Módulo que recibe una condición por parámetro, busca los responsable de viaje en la base de datos y los retorna en un array
 	 * @param string
 	 * @return array
 	 */
@@ -238,17 +247,16 @@ class ResponsableV{
 		 return $colResponsable;
 	}
     
-    /** Método que muestra por pantalla una instancia de ResponsableV en forma de cadena de caracteres
+    /** Módulo que muestra por pantalla una instancia de ResponsableV en forma de cadena de caracteres
      * @return string
      */
     public function __toString(){
-        return "*************************************************"."\n".
-               "Responsable del viaje"."\n".
-               "Nombre: ".$this->getNombre()."\n".
-               "Apellido: ".$this->getApellido()."\n".
-               "Numero de licencia: ".$this->getNumeroLicencia()."\n".
-               "Numero de empleado: ".$this->getNumeroEmpleado()."\n".
-               "*************************************************"."\n";
+        return "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n".
+               "| Nombre             | ".$this->getNombre()." |\n".
+               "| Apellido           | ".$this->getApellido()." |\n".
+               "| Número de licencia | ".$this->getNumeroLicencia()." |\n".
+               "| Número de empleado | ".$this->getNumeroEmpleado()." |\n".
+               "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n";
     }
 }
 ?>

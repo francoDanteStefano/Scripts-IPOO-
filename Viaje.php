@@ -1,7 +1,8 @@
 <?php
 
 class Viaje {
-    /**Variables instancia de la clase Viaje
+    /**
+     * Variables instancia de la clase Viaje
      * int $idViaje
      * string $destino
      * int $cantMaxPasajeros
@@ -9,8 +10,8 @@ class Viaje {
      * object $objEmpresa
      * object $objResponsableV
      * int $importe
-     * int $tipoAsiento
-     * int $idaYVuelta
+     * string $tipoAsiento
+     * string $idaYVuelta
      * string $mensajeError
      */
     private $idViaje;
@@ -30,7 +31,7 @@ class Viaje {
     /*****************************************************************/ 
 
     /**
-     * Obtiene int $codigo
+     * Obtiene el valor de idViaje
      */ 
     public function getIdViaje(){
         return $this->idViaje;
@@ -104,7 +105,7 @@ class Viaje {
     /*****************************************************************/
      
     /**
-     * Establece int $codigo
+     * Establece el valor de idViaje
      */ 
     public function setIdViaje($idViaje){
         $this->idViaje = $idViaje;
@@ -193,15 +194,15 @@ class Viaje {
     }
 
     /**
-     * Módulo que setea los valores dados por parametros en las variables instancia de la clase
+     * Módulo que setea los valores dados por parámetros en las variables instancia de la clase
      * @param int $idViaje
      * @param string $destino
      * @param int $cantMaxPasajeros
      * @param object $objEmpresa
      * @param object $objResponsableV
      * @param int $importe
-     * @param int $tipoAsiento
-     * @param int $idaYVuelta
+     * @param string $tipoAsiento
+     * @param string $idaYVuelta
      */
     public function cargar($idViaje, $destino, $cantMaxPasajeros, $objEmpresa, $objResponsableV, $importe, $tipoAsiento, $idaYVuelta){
         $this->setIdViaje($idViaje);
@@ -222,8 +223,12 @@ class Viaje {
 		$bd = new BaseDatos();
 		$resp = false;
 		$insertarEmpresa = "INSERT INTO viaje(vdestino, vcantmaxpasajeros, idempresa, rnumeroempleado, vimporte, tipoAsiento, idayvuelta) 
-				            VALUES ('".$this->getDestino()."','".$this->getCantMaxPasajeros()."','".$this->getObjEmpresa()->getIdEmpresa()."',
-                                    '".$this->getObjResponsableV()->getNumeroEmpleado()."','".$this->getImporte()."','".$this->getTipoAsiento()."',
+				            VALUES ('".$this->getDestino()."',
+                                    ".$this->getCantMaxPasajeros().",
+                                    ".$this->getObjEmpresa()->getIdEmpresa().",
+                                    ".$this->getObjResponsableV()->getNumeroEmpleado().",
+                                    ".$this->getImporte().",
+                                    '".$this->getTipoAsiento()."',
                                     '".$this->getIdaYVuelta()."')";
 		if($bd->iniciar()){
 			if($bd->ejecutar($insertarEmpresa)){
@@ -246,11 +251,13 @@ class Viaje {
 	    $bd = new BaseDatos();
 		$modificarViaje = "UPDATE viaje 
                            SET vdestino = '".$this->getDestino()."',
-                           vcantmaxpasajeros = '".$this->getCantMaxPasajeros()."', 
-                           idempresa = '".$this->getObjEmpresa()->getIdEmpresa()."',
-                           rnumeroempleado = '".$this->getObjResponsableV()->getNumeroEmpleado()."', 
-                           vimporte = '".$this->getImporte()."', tipoAsiento = '".$this->getTipoAsiento()."', 
-                           idayvuelta = '".$this->getIdaYVuelta()."'";
+                           vcantmaxpasajeros = ".$this->getCantMaxPasajeros().", 
+                           idempresa = ".$this->getObjEmpresa()->getIdEmpresa().",
+                           rnumeroempleado = ".$this->getObjResponsableV()->getNumeroEmpleado().", 
+                           vimporte = ".$this->getImporte().",
+                           tipoAsiento = '".$this->getTipoAsiento()."', 
+                           idayvuelta = '".$this->getIdaYVuelta()."'
+                           WHERE idviaje = ".$this->getIdViaje()."";
 		if($bd->iniciar()){
 			if($bd->ejecutar($modificarViaje)){
 			    $resp = true;
@@ -271,7 +278,8 @@ class Viaje {
 		$bd = new BaseDatos();
 		$resp = false;
 		if($bd->iniciar()){
-			$borrarViaje = "DELETE FROM Viaje WHERE idviaje = ".$this->getIdViaje();
+			$borrarViaje = "DELETE FROM Viaje 
+                            WHERE idviaje = ".$this->getIdViaje();
 			if($bd->ejecutar($borrarViaje)){
 				$resp = true;
 			}else{
@@ -282,13 +290,15 @@ class Viaje {
 		}
 		return $resp; 
 	}
+    
 	/**
 	 * Módulo que busca una empresa en la base de datos
 	 * @return bool
 	 */
     public function buscar($idViaje){
 		$bd = new BaseDatos();
-		$buscarViaje = "SELECT * FROM viaje WHERE idviaje = ".$idViaje;
+		$buscarViaje = "SELECT * FROM viaje 
+                        WHERE idviaje = ".$idViaje;
 		$resp = false;
 		if($bd->iniciar()){
 			if($bd->ejecutar($buscarViaje)){
@@ -317,7 +327,7 @@ class Viaje {
 	}
 
     /**
-	 * Módulo que recibe una condicion por parametro, busca los viajes en la base de datos y los retorna en un array
+	 * Módulo que recibe una condición por parámetro, busca los viajes en la base de datos y los retorna en un array
 	 * @param string
 	 * @return array
 	 */
@@ -378,31 +388,31 @@ class Viaje {
         $this->arrayObjPasajeros();
         $coleccion = $this->getColPasajeros();
         $vacancy = false;
-        if (count($coleccion) > $this->getCantMaxPasajeros()){
+        if (count($coleccion) < $this->getCantMaxPasajeros()){
             $vacancy = true;
         }
         return $vacancy;
     }
 
-    /** Método que muestra por pantalla una instancia de Viaje en forma de cadena de caracteres
+    /** Módulo que muestra por pantalla una instancia de Viaje en forma de cadena de caracteres
      * @return string
      */
     function __toString()
     {
-        return "*************************************************\n".
-               "Código de viaje: ".$this->getIdViaje()."\n".
-               "Destino: ".$this->getDestino()."\n".
-               "Capacidad máxima de pasajeros: ".$this->getCantMaxPasajeros()."\n".
-               "Pasajeros: "."\n".$this->pasajerosToString()."\n".
-               "Empresa: "."\n".$this->getObjEmpresa()."\n".
-               "Responsable de viaje: "."\n".$this->getObjResponsableV()."\n".
-               "Importe de asiento: "."\n".$this->getImporte()."\n".
-               "Tipo de asiento: "."\n".$this->getTipoAsiento()."\n".
-               "Ida y vuelta: "."\n".$this->getIdaYVuelta()."\n".
-               "*************************************************\n";
+        return "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n".
+               "| Código de viaje               | ".$this->getIdViaje()." |\n".
+               "| Destino                       | ".$this->getDestino()." |\n".
+               "| Capacidad máxima de pasajeros | ".$this->getCantMaxPasajeros()." |\n".
+               "| Pasajeros                     |\n".$this->pasajerosToString()."\n".
+               "| Empresa                       |\n".$this->getObjEmpresa().
+               "| Responsable de viaje          |\n".$this->getObjResponsableV().
+               "| Importe de asiento            | ".$this->getImporte()." |\n".
+               "| Tipo de asiento               | ".$this->getTipoAsiento()." |\n".
+               "| Ida y vuelta                  | ".$this->getIdaYVuelta()." |\n".
+               "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n";
     } 
 
-    /** Método que convierte la colección de los objetos pasajeros en una cadena de caracteres. 
+    /** Módulo que convierte la colección de los objetos pasajeros en una cadena de caracteres. 
      * @return string
      */
     public function pasajerosToString(){

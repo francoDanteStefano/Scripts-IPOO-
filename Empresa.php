@@ -1,7 +1,8 @@
 <?php
 
 class Empresa{
-    /**Variables instancia de la clase Empresa
+    /**
+	 * Variables instancia de la clase Empresa
      * int $idEmpresa
      * string $eNombre
      * string $eDireccion
@@ -11,11 +12,42 @@ class Empresa{
     private $eNombre;
     private $eDireccion;
     private $mensajeError;
+            
+    /*****************************************************************/
+    /*************************** GETTER ******************************/
+    /*****************************************************************/ 
     
-    
-    /**************************************/
-    /**************** SET *****************/
-    /**************************************/
+    /**
+     * Obtiene el valor de idEmpresa
+     */ 
+    public function getIdEmpresa(){
+        return $this->idEmpresa;
+    }
+
+    /**
+     * Obtiene el valor de eNombre
+     */ 
+    public function getENombre(){
+        return $this->eNombre;
+    }
+
+    /**
+     * Obtiene el valor de eDireccion
+     */ 
+    public function getEDireccion(){
+        return $this->eDireccion;
+    }
+
+    /**
+     * Obtiene el valor de mensajeError
+     */ 
+    public function getMensajeError(){
+        return $this->mensajeError;
+    }
+
+    /*****************************************************************/
+    /*************************** SETTER ******************************/
+    /*****************************************************************/ 
     
     /**
      * Establece el valor de mensajeError
@@ -45,41 +77,9 @@ class Empresa{
         $this->idEmpresa = $idEmpresa;
     }
     
-    /**************************************/
-    /**************** GET *****************/
-    /**************************************/
-    
-    /**
-     * Obtiene el valor de idEmpresa
-     */ 
-    public function getIdEmpresa(){
-        return $this->idEmpresa;
-    }
-
-    /**
-     * Obtiene el valor de eNombre
-     */ 
-    public function getENombre(){
-        return $this->eNombre;
-    }
-
-    /**
-     * Obtiene el valor de eDireccion
-     */ 
-    public function getEDireccion(){
-        return $this->eDireccion;
-    }
-
-    /**
-     * Obtiene el valor de mensajeError
-     */ 
-    public function getMensajeError(){
-        return $this->mensajeError;
-    }
-    
-    /**************************************/
-    /************** FUNCIONES *************/
-    /**************************************/
+    /*****************************************************************/
+    /*************************** FUNCIONES ***************************/
+    /*****************************************************************/
     
     /**
      * Módulo constructor de la clase Empresa
@@ -91,7 +91,7 @@ class Empresa{
     }
 
     /**
-     * Módulo que setea los valores dados por parametros en las variables instancia de la clase
+     * Módulo que setea los valores dados por parámetros en las variables instancia de la clase
      * @param int $idEmpresa
      * @param string $eNombre
      * @param string $eDireccion
@@ -110,7 +110,8 @@ class Empresa{
 		$bd = new BaseDatos();
 		$resp = false;
 		$insertarEmpresa = "INSERT INTO empresa(enombre, edireccion) 
-				            VALUES ('".$this->getENombre()."','".$this->getEDireccion()."')";
+				            VALUES ('".$this->getENombre()."',
+							        '".$this->getEDireccion()."')";
 		if($bd->iniciar()){
 			if($bd->ejecutar($insertarEmpresa)){
 			    $resp = true;
@@ -130,7 +131,10 @@ class Empresa{
 	public function modificar(){
 	    $resp = false; 
 	    $bd = new BaseDatos();
-		$modificarEmpresa = "UPDATE empresa SET enombre = '".$this->getENombre()."', edireccion = '".$this->getEDireccion()."' WHERE idempresa = '".$this->getIdEmpresa()."'";
+		$modificarEmpresa = "UPDATE empresa 
+							 SET enombre = '".$this->getENombre()."',
+							 	 edireccion = '".$this->getEDireccion()."' 
+							 WHERE idempresa = ".$this->getIdEmpresa()."";
 		if($bd->iniciar()){
 			if($bd->ejecutar($modificarEmpresa)){
 			    $resp = true;
@@ -151,24 +155,27 @@ class Empresa{
 		$bd = new BaseDatos();
 		$resp = false;
 		if($bd->iniciar()){
-			$borrarEmpresa = "DELETE FROM empresa WHERE idempresa = ".$this->getIdEmpresa();
-			if($bd->ejecutar($borrarEmpresa)){
-				$resp = true;
-			}else{
-				$this->setMensajeError($bd->getERROR());
-			}
+			$borrarEmpresa = "DELETE FROM empresa 
+			                  WHERE idempresa = ".$this->getIdEmpresa();    
+			if($bd->ejecutar($borrarEmpresa)){    
+				$resp = true;    
+			}else{    
+				$this->setMensajeError($bd->getERROR());    
+			}    
 		}else{
 			$this->setMensajeError($bd->getERROR());
 		}
 		return $resp; 
 	}
+
 	/**
 	 * Módulo que busca una empresa en la base de datos
 	 * @return bool
 	 */
     public function buscar($idEmpresa){
 		$bd = new BaseDatos();
-		$buscarEmpresa = "SELECT * FROM empresa WHERE idempresa = ".$idEmpresa;
+		$buscarEmpresa = "SELECT * FROM empresa 
+						  WHERE idempresa = ".$idEmpresa;
 		$resp = false;
 		if($bd->iniciar()){
 			if($bd->ejecutar($buscarEmpresa)){
@@ -188,7 +195,7 @@ class Empresa{
 	}
 
     /**
-	 * Módulo que recibe una condicion por parametro, busca las empresas en la base de datos y los retorna en un array
+	 * Módulo que recibe una condición por parámetro, busca las empresas en la base de datos y los retorna en un array
 	 * @param string
  	 * @return array
 	 */
@@ -222,9 +229,11 @@ class Empresa{
      * @return string
      */
     public function __toString(){
-        return "| Empresa N°: | ".$this->getIdEmpresa()." |\n".
-               "| Nombre:     | ".$this->getENombre()." |\n".
-               "| Dirección:  | ".$this->getEDireccion()." |\n";
+        return "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n".
+			   "| Empresa    | N°".$this->getIdEmpresa()." |\n".
+               "| Nombre     | ".$this->getENombre()." |\n".
+               "| Dirección  | ".$this->getEDireccion()." |\n".
+			   "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n";
     }
 }
 ?>

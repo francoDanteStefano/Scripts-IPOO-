@@ -7,7 +7,7 @@ class Pasajero{
      * string $apellido
      * int $documento
      * int $telefono
-     * array $colViajes
+	 * object objViaje
      */
     private $documento;
     private $nombre;
@@ -21,7 +21,7 @@ class Pasajero{
     /*****************************************************************/ 
 
     /**
-     * Obtiene string $nombre
+     * Obtiene el valor de documento
      */ 
     public function getDocumento(){
         return $this->documento;
@@ -35,7 +35,7 @@ class Pasajero{
     }
 
     /**
-     * Obtiene el valor de Apellido
+     * Obtiene el valor de apellido
      */ 
     public function getApellido(){
         return $this->apellido;
@@ -49,7 +49,7 @@ class Pasajero{
     }
 
     /**
-     * Obtiene el valor de colViajes
+     * Obtiene el valor de objViaje
      */ 
     public function getObjViaje(){
         return $this->objViaje;
@@ -67,7 +67,7 @@ class Pasajero{
     /*****************************************************************/ 
     
     /**
-     * Establece string $nombre
+     * Establece el valor de documento
      */ 
     public function setDocumento($documento){
         $this->documento = $documento;
@@ -95,7 +95,7 @@ class Pasajero{
     }
 
     /**
-     * Establece el valor de colViajes
+     * Establece el valor de objViaje
      */ 
     public function setObjViaje($objViaje){
         $this->objViaje = $objViaje;
@@ -123,8 +123,9 @@ class Pasajero{
 		$this->telefono = "";
 		$this->objViaje = "";
 	}
+
 	/**
-	 * Módulo que setea los valores dados por parametros en las variables instancia de la clase
+	 * Módulo que setea los valores dados por parámetros en las variables instancia de la clase
 	 * @param string $nombre
  	 * @param string $apellido
 	 * @param int $documento
@@ -147,7 +148,11 @@ class Pasajero{
 		$bd = new BaseDatos();
 		$resp = false;
 		$insertarPasajero = "INSERT INTO pasajero(pdocumento, papellido, pnombre,  ptelefono, idviaje) 
-				     		 VALUES ('".$this->getDocumento()."','".$this->getApellido()."','".$this->getNombre()."','".$this->getObjViaje()->getIdViaje()."')";
+				     		 VALUES (".$this->getDocumento().",
+							         '".$this->getApellido()."',
+									 '".$this->getNombre()."',
+									 ".$this->getTelefono().",
+									 ".$this->getObjViaje()->getIdViaje().")";
 		if($bd->iniciar()){
 			if($bd->ejecutar($insertarPasajero)){
 			    $resp = true;
@@ -168,12 +173,12 @@ class Pasajero{
 	    $resp = false; 
 	    $bd = new BaseDatos();
 		$modificarPasajero = "UPDATE pasajero 
-							  SET pdocumento = '".$this->getDocumento."', 
+							  SET pdocumento = ".$this->getDocumento().", 
 							      papellido = '".$this->getApellido()."', 
 								  pnombre = '".$this->getNombre()."', 
-								  ptelefono = '".$this->getTelefono()."', 
-								  idviaje = '".$this->getObjViaje()->getIdViaje()."'
-							  WHERE pdocumento = '".$this->getDocumento()."'";
+								  ptelefono = ".$this->getTelefono().", 
+								  idviaje = ".$this->getObjViaje()->getIdViaje()."
+							  WHERE pdocumento = ".$this->getDocumento()."";
 		if($bd->iniciar()){
 			if($bd->ejecutar($modificarPasajero)){
 			    $resp = true;
@@ -194,7 +199,8 @@ class Pasajero{
 		$bd = new BaseDatos();
 		$resp = false;
 		if($bd->iniciar()){
-			$borrarPasajero = "DELETE FROM pasajero WHERE pdocumento = ".$this->getDocumento();
+			$borrarPasajero = "DELETE FROM pasajero 
+							   WHERE pdocumento = ".$this->getDocumento();
 			if($bd->ejecutar($borrarPasajero)){
 				$resp = true;
 			}else{
@@ -205,23 +211,25 @@ class Pasajero{
 		}
 		return $resp; 
 	}
+
 	/**
 	 * Módulo que busca un pasajero en la base de datos
 	 * @return bool
 	 */
     public function buscar($documento){
 		$bd = new BaseDatos();
-		$buscarPasajero = "SELECT * FROM pasajero WHERE pdocumento = ".$documento;
+		$buscarPasajero = "SELECT * FROM pasajero 
+						   WHERE pdocumento = ".$documento;
 		$resp = false;
 		if($bd->iniciar()){
 			if($bd->ejecutar($buscarPasajero)){
 				if($passenger = $bd->registro()){					
-				    $this->setDocumento($documento);
+					$objViaje = new Viaje();
+					$objViaje->buscar($passenger['idviaje']);
 					$this->setNombre($passenger['pnombre']);
 					$this->setApellido($passenger['papellido']);
 					$this->setTelefono($passenger['ptelefono']);
-					$objViaje = new Viaje();
-					$objViaje->buscar($passenger['idviaje']);
+					$this->setDocumento($documento);
 					$this->setObjViaje($objViaje);
 					$resp = true;
 				}				
@@ -235,7 +243,7 @@ class Pasajero{
 	}
 
     /**
-	 * Módulo que recibe una condicion por parametro, busca los pasajeros en la base de datos y los retorna en un array
+	 * Módulo que recibe una condición por parámetro, busca los pasajeros en la base de datos y los retorna en un array
 	 * @param string
 	 * @return array
 	 */
@@ -267,14 +275,13 @@ class Pasajero{
      * @return string
      */
     public function __toString(){
-        return "*************************************************"."\n".
-               "Pasajero: "."\n".
-               "Nombre: ".$this->getNombre()."\n".
-               "Apellido: ".$this->getApellido()."\n".
-               "Número de documento: ".$this->getDocumento()."\n".
-               "Teléfono: ".$this->getTelefono()."\n".
-               "Viaje: ".$this->getObjViaje()."\n".
-               "*************************************************"."\n";
-    }  
+        return "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n".
+               "| Nombre              | ".$this->getNombre()." |\n".
+               "| Apellido            | ".$this->getApellido()." |\n".
+               "| Número de documento | ".$this->getDocumento()." |\n".
+               "| Teléfono            | ".$this->getTelefono()." |\n".
+               "| Viaje               | N°".$this->getObjViaje()->getIdViaje()." con destino a ".$this->getObjViaje()->getDestino()." |\n".
+               "|\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\|\n";
+    } 
 }
 ?>
